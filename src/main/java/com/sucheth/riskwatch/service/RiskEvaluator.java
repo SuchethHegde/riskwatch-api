@@ -29,10 +29,10 @@ public class RiskEvaluator {
 
     public RiskEvaluationResult evaluate(Transaction tx) {
         List<String> reasons = new ArrayList<>();
-        int score = 0;
+        double score = 0.0;
 
         if (tx.getAmount() > amountThreshold) {
-            score += 60;
+            score += 0.3;
             reasons.add("Transaction amount exceeds threshold.");
         }
 
@@ -40,11 +40,20 @@ public class RiskEvaluator {
         long recentCount = transactionRepository.findByUserId(tx.getUserId()).stream().filter(t -> t.getTimestamp().isAfter(cutoff)).count();
         
         if (recentCount > velocityLimit) {
-            score += 40;
+            score += 0.4;
             reasons.add("High transaction velocity detected.");
         }
 
-        RiskLevel level = (score > 70)? RiskLevel.HIGH: (score > 30)? RiskLevel.MEDIUM: RiskLevel.LOW;
+        score = Math.min(1.0, score);
+
+        RiskLevel level;
+        if (score >= 0.7) {
+            level = RiskLevel.HIGH;
+        } else if (score >= 0.4) {
+            level = RiskLevel.MEDIUM;
+        } else {
+            level = RiskLevel.LOW;
+        }
 
         return new RiskEvaluationResult(score, level, reasons);
     }

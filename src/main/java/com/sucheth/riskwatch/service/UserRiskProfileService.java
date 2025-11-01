@@ -2,6 +2,7 @@ package com.sucheth.riskwatch.service;
 
 import com.sucheth.riskwatch.model.Transaction;
 import com.sucheth.riskwatch.model.UserRiskProfile;
+import com.sucheth.riskwatch.model.enums.RiskLevel;
 import com.sucheth.riskwatch.repository.UserRiskProfileRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class UserRiskProfileService {
-    private final UserRiskProfileRepository UserRiskProfileRepository;
+
+    private final UserRiskProfileRepository userRiskProfileRepository;
 
     @Transactional
     public void updateUserRiskProfile(Transaction tx) {
-        UserRiskProfile profile = UserRiskProfileRepository.findById(tx.getUserId())
+        UserRiskProfile profile = userRiskProfileRepository.findById(tx.getUserId())
                 .orElse(UserRiskProfile.builder()
                         .userId(tx.getUserId())
                         .totalTransactions(0)
@@ -27,11 +29,15 @@ public class UserRiskProfileService {
                         .build());
         
         int totalTx = profile.getTotalTransactions() + 1;
-        double newAvgRisk = ((profile.getAverageRiskScore() * profile.getTotalTransactions()) + tx.getRiskScore()) / totalTx;
+        double txScore = tx.getRiskScore();
+        double newAvgRisk = ((profile.getAverageRiskScore() * profile.getTotalTransactions()) + txScore) / totalTx;
+        
         int highRiskCount = profile.getHighRiskTransactionCount();
-        if (tx.getRiskLevel().name().equals("HIGH")) { // Assuming risk score > 7 is high risk
+        boolean isHighRiskTx = (tx.getRiskLevel() != null && tx.getRiskLevel().equals(RiskLevel.HIGH)) || tx.getRiskScore() >= 0.8;
+        if (isHighRiskTx) {
             highRiskCount++;
         }
+
         String level = computeUserRiskLevel(newAvgRisk);
         boolean flagged = level.equals("HIGH") || highRiskCount >= 5;
 
@@ -42,21 +48,21 @@ public class UserRiskProfileService {
         profile.setUserRiskLevel(level);
         profile.setIsFlagged(flagged);
 
-        UserRiskProfileRepository.save(profile);
+        userRiskProfileRepository.save(profile);
     }
 
     public List<UserRiskProfile> getFlaggedUsers() {
-        return UserRiskProfileRepository.findByIsFlaggedTrue();
+        return userRiskProfileRepository.findByIsFlaggedTrue();
     }
 
     public UserRiskProfile getProfileByUserId(String userId) {
-        return UserRiskProfileRepository.findById(userId).orElse(null);
+        return userRiskProfileRepository.findById(userId).orElse(null);
     }
 
     private String computeUserRiskLevel(double avgRiskScore) {
-        if (avgRiskScore < 40) {
+        if (avgRiskScore < 0.4) {
             return "LOW";
-        } else if (avgRiskScore < 70) {
+        } else if (avgRiskScore < 0.7) {
             return "MEDIUM";
         } else {
             return "HIGH";
