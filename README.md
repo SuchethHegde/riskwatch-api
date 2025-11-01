@@ -61,8 +61,9 @@ http://localhost:8080
 
 # Running Tests
 ./mvnw test
+```
 
-# Author
+## Author
 - Sucheth Hegde
 
 ## License
