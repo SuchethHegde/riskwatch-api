@@ -1,5 +1,7 @@
 package com.sucheth.riskwatch.service;
 
+import java.time.Instant;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class TransactionService {
         Transaction tx = Transaction.builder().transactionId(request.getTransactionId())
         .userId(request.getUserId())
         .amount(request.getAmount())
-        .timestamp(request.getTimestamp())
+        .timestamp(request.getTimestamp() != null ? request.getTimestamp() : Instant.now())
         .deviceId(request.getDeviceId())
         .location(request.getLocation())
         .build();

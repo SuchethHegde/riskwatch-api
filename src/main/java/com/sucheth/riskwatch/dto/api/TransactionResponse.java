@@ -10,9 +10,10 @@ import com.sucheth.riskwatch.model.enums.RiskLevel;
 @Data
 @Builder
 public class TransactionResponse {
+    
     private String transactionId;
     private String userId;
-    private int riskScore;
+    private double riskScore;
     private RiskLevel riskLevel;
     private List<String> reasons;
     private Instant evaluatedAt;

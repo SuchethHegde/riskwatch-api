@@ -11,7 +11,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class RiskEvaluationResult {
-    private int score;
+    private double score;
     private RiskLevel level;
     private List<String> reasons;
 }

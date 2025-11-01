@@ -4,17 +4,8 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import jakarta.persistence.*;
+import lombok.*;
 import com.sucheth.riskwatch.model.enums.RiskLevel;
 
 
@@ -24,21 +15,35 @@ import com.sucheth.riskwatch.model.enums.RiskLevel;
 @AllArgsConstructor
 @Builder
 public class Transaction {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(unique = true, nullable = false)
     private String transactionId;
+
+    @Column(nullable = false)
     private String userId;
+
+    @Column(nullable = false)
     private Double amount;
+
+    @Column(nullable = false)
     private Instant timestamp;
+
     private String deviceId;
     private String location;
 
-    private Integer riskScore;
+    @Column(nullable = false)
+    private double riskScore;
+
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RiskLevel riskLevel;
 
     @ElementCollection
+    @CollectionTable(name = "transaction_reasons", joinColumns = @JoinColumn(name = "transaction_id"))
+    @Column(name = "reason")
     private List<String> reasons = new ArrayList<>();
 }
