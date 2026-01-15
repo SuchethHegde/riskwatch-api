@@ -1,6 +1,7 @@
 package com.sucheth.riskwatch.dto.api;
 
 import com.sucheth.riskwatch.model.UserRiskProfile;
+import com.sucheth.riskwatch.model.enums.UserRiskLevel;
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,7 +15,7 @@ public class UserRiskProfileResponse {
     private Double averageRiskScore;
     private Integer highRiskTransactionCount;
     private Instant lastTransactionTime;
-    private String userRiskLevel;
+    private UserRiskLevel userRiskLevel;
     private Boolean isFlagged;
 
     public static UserRiskProfileResponse from(UserRiskProfile profile) {

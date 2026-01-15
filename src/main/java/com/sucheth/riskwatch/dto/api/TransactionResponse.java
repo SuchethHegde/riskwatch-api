@@ -25,7 +25,7 @@ public class TransactionResponse {
         .riskScore(tx.getRiskScore())
         .riskLevel(tx.getRiskLevel())
         .reasons(tx.getReasons())
-        .evaluatedAt(Instant.now())
+        .evaluatedAt(tx.getTimestamp())
         .build();
     }
 }

@@ -1,6 +1,7 @@
 package com.sucheth.riskwatch.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +40,16 @@ public class TransactionService {
         userRiskProfileService.updateUserRiskProfile(tx);
 
         return TransactionResponse.from(tx);
+    }
+
+    public List<TransactionResponse> getUserTransactions(String userId) {
+        List<Transaction> transactions = transactionRepository.findByUserId(userId)
+            .stream()
+            .sorted((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()))
+            .toList();
+        
+        return transactions.stream()
+            .map(TransactionResponse::from)
+            .toList();
     }
 }

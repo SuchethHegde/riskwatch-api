@@ -22,8 +22,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import com.sucheth.riskwatch.dto.api.TransactionRequest;
 import com.sucheth.riskwatch.dto.api.TransactionResponse;
 import com.sucheth.riskwatch.dto.common.ApiResponseWrapper;
-import com.sucheth.riskwatch.model.Transaction;
-import com.sucheth.riskwatch.repository.TransactionRepository;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
@@ -32,7 +30,6 @@ import com.sucheth.riskwatch.repository.TransactionRepository;
 public class TransactionController {
 
     private final TransactionService transactionService;
-    private final TransactionRepository transactionRepository;
 
     @PostMapping
     @Operation(
@@ -57,21 +54,13 @@ public class TransactionController {
         @Parameter(description = "Unique identifier of the user whose transactions are to be fetched")
         @PathVariable String userId) {
 
-        List<Transaction> transactions = transactionRepository.findByUserId(userId)
-            .stream()
-            .sorted((a, b) -> b.getTimestamp().compareTo(a.getTimestamp()))
-            .toList();
+        List<TransactionResponse> response = transactionService.getUserTransactions(userId);
 
-    if (transactions.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-            .body(ApiResponseWrapper.error("No transactions found for user: " + userId));
+        if (response.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ApiResponseWrapper.error("No transactions found for user: " + userId));
+        }
+
+        return ResponseEntity.ok(ApiResponseWrapper.success(response, "Transactions retrieved successfully for user: " + userId));
     }
-
-    List<TransactionResponse> response = transactions.stream()
-        .map(TransactionResponse::from)
-        .toList();
-
-    return ResponseEntity.ok(ApiResponseWrapper.success(response, "Transactions retrieved successfully for user: " + userId
-    ));
-}
 }

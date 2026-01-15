@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -48,7 +49,7 @@ public class UserController {
 
         UserRiskProfile profile = userRiskProfileService.getProfileByUserId(userId);
         if (profile == null) {
-            return ResponseEntity.status(404).body(ApiResponseWrapper.error("User not found: " + userId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponseWrapper.error("User not found: " + userId));
         }
 
         UserRiskProfileResponse response = UserRiskProfileResponse.from(profile);

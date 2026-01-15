@@ -37,7 +37,9 @@ public class RiskEvaluator {
         }
 
         Instant cutoff = tx.getTimestamp().minus(Duration.ofMinutes(velocityWindowMinutes));
-        long recentCount = transactionRepository.findByUserId(tx.getUserId()).stream().filter(t -> t.getTimestamp().isAfter(cutoff)).count();
+        long recentCount = transactionRepository.findByUserId(tx.getUserId()).stream()
+            .filter(t -> t.getTimestamp().isAfter(cutoff) && !t.getTransactionId().equals(tx.getTransactionId()))
+            .count();
         
         if (recentCount > velocityLimit) {
             score += 0.4;
