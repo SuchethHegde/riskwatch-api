@@ -3,12 +3,15 @@ package com.sucheth.riskwatch.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import com.sucheth.riskwatch.model.enums.UserRiskLevel;
 
 @Entity
 @Data
@@ -32,8 +35,9 @@ public class UserRiskProfile {
     @Column(nullable = false)
     private Instant lastTransactionTime;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String userRiskLevel;
+    private UserRiskLevel userRiskLevel;
 
     @Column(nullable = false)
     private Boolean isFlagged;

@@ -20,7 +20,7 @@ public class TransactionRequest {
     @Positive
     private Double amount;
     
-    @NotNull
+
     private Instant timestamp;
     
     private String deviceId;
