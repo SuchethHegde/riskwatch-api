@@ -19,6 +19,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     List<Transaction> findByUserIdAndTimestampAfter(String userId, Instant cutoff);
 
+    java.util.Optional<Transaction> findByTransactionId(String transactionId);
+
     @Query("SELECT t FROM Transaction t WHERE t.riskScore > :minScore")
     List<Transaction> findTransactionsAboveRiskScore(@Param("minScore") double minScore);
 
@@ -27,4 +29,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("userId") String userId,
             org.springframework.data.domain.Pageable pageable
     );
+
+    org.springframework.data.domain.Page<Transaction> findByUserIdOrderByTimestampDesc(String userId, org.springframework.data.domain.Pageable pageable);
 }

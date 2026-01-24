@@ -41,11 +41,4 @@ public class UserRiskProfile {
 
     @Column(nullable = false)
     private Boolean isFlagged;
-
-    public void incrementTransactionCount() {
-        if (this.totalTransactions == null) {
-            this.totalTransactions = 0;
-        }
-        this.totalTransactions++;
-    }
 }
