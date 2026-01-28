@@ -45,5 +45,6 @@ public class Transaction {
     @ElementCollection
     @CollectionTable(name = "transaction_reasons", joinColumns = @JoinColumn(name = "transaction_id"))
     @Column(name = "reason")
+    @Builder.Default
     private List<String> reasons = new ArrayList<>();
 }
