@@ -36,6 +36,9 @@ jobs:
         distribution: 'temurin'
         cache: maven
 
+    - name: Make Maven Wrapper Executable
+      run: chmod +x ./mvnw
+
     - name: Run tests
       run: ./mvnw clean test
       env:
